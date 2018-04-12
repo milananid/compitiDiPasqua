@@ -31,16 +31,18 @@ $(function() {
         $(el.target).find('span').html(ratio)
         //console.log(el);
         if(ratio >= 10){
+
           //l'elemento è entrato
-          $(el.target).addClass('show');
-          var myObjs = $(el.target).children();
-          TweenMax.staggerTo(myObjs, 1, {opacity:1, y:0, ease:Expo.easeInOut}, 0.5);     //settaggio effetuato alla riga 11
-        }if(ratio <= 40){
-          $(el.target).removeClass('show');
-          var myObjs = $(el.target).children();
-          TweenMax.staggerTo(myObjs, 1, {opacity:0, y:100, ease:Expo.easeInOut}, 0.5);
+
+          checkTransitions($(el.target), true);
+
+          //$(el.target).addClass('show');
         }else{
           //l'elemento è uscito
+
+          checkTransitions($(el.target), false);
+
+          //$(el.target).removeClass('show');
         }
       }
     });
@@ -71,18 +73,59 @@ $(function() {
 
 
 
-var position = $(window).scrollTop();
 
+
+
+$('html').removeClass('scroll-dir-up').addClass('scroll-dir-down');
+window.scrollDir = 'down';
+
+var position = $(window).scrollTop();
 $(window).scroll(function(){
   var scroll = $(window).scrollTop();
   if (scroll > position) {
-
-  }
-  else{
-
+    $('html').removeClass('scroll-dir-up').addClass('scroll-dir-down');
+    window.scrollDir = 'down';
+  }else{
+    $('html').removeClass('scroll-dir-down').addClass('scroll-dir-up');
+    window.scrollDir = 'up';
   }
   position = scroll;
 })
+
+function checkTransitions(el, isInViewport) {
+  if(isInViewport == true){
+    //el deve apparire
+    checkTransitionsEnterUp(el);
+    checkTransitionsEnterDown(el);
+  }else{
+    //el deve scomparire
+    checkTransitionsExitUp(el);
+    checkTransitionsExitDown(el);
+  }
+}
+
+
+function checkTransitionsEnterDown(el) {
+  if($('html').hasClass('scroll-dir-down') && !$(el).hasClass('show')){
+      $(el).addClass('show enterDown').removeClass('enterUp').removeClass('exitUp').removeClass('exitDown')
+  }
+}
+function checkTransitionsExitUp(el) {
+  if($('html').hasClass('scroll-dir-down') && $(el).hasClass('show')){
+      $(el).addClass('exitUp').removeClass('enterUp').removeClass('enterDown').removeClass('exitDown').removeClass('show')
+  }
+}
+
+function checkTransitionsEnterUp(el) {
+  if($('html').hasClass('scroll-dir-up') && !$(el).hasClass('show')){
+      $(el).addClass('show enterUp').removeClass('enterDown').removeClass('exitUp').removeClass('exitDown')
+  }
+}
+function checkTransitionsExitDown(el) {
+  if($('html').hasClass('scroll-dir-up') && $(el).hasClass('show')){
+      $(el).addClass('exitDown').removeClass('enterUp').removeClass('enterDown').removeClass('exitUp').removeClass('show')
+  }
+}
 
 
 /*
